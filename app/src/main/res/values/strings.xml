@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">FirebaseRealtimeDbBackend</string>
+
+    <!--Firebase Results-->
+    <string name="creation_success"></string>
+    <string name="creation_failed"></string>
+    <string name="update_success"></string>
+    <string name="update_failed"></string>
+    <string name="retrieve_data_exists"></string>
+    <string name="retrieve_no_data"></string>
+    <string name="delete_success"></string>
+    <string name="delete_failed"></string>
+    <string name="firebase_server_error"></string>
 </resources>

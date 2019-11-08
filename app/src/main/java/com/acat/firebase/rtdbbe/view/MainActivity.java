@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
     private EditText name, age;
     private ListView listView;
 
-    private FirebaseRealtimeCRUDGenerator generator;
+    private FirebaseRealtimeCRUDGenerator firebaseCRUD;
     private User user;
     private String childrenPath;
     private List<KeyAndValue> data;
@@ -53,12 +52,22 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
         listView.setOnItemClickListener(this);
 
         //Fascade
-        generator = (FirebaseRealtimeCRUDGenerator)
+        firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
                 ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
-        //Set Children
+        //Set Children Path
         childrenPath = "entries/registration/users";
+    }
 
-        generator.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseCRUD.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        firebaseCRUD.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
     }
 
     @Override
@@ -69,9 +78,14 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
     }
 
     @Override
-    public void retrieveFirebaseResult(final List<KeyAndValue> data) {
+    public void retrieveFirebaseData(final List<KeyAndValue> data) {
         this.data = data;
-        listView.setAdapter(new CustomListView(this, data));
+        if (data==null) {
+            listView.setAdapter(null);
+        }
+        else {
+            listView.setAdapter(new CustomListView(this, data));
+        }
     }
 
     @Override
@@ -86,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
                     user = (User) ((AppLayer)getApplication()).getInstance(User.class);
                     user.setName(name.getText().toString());
                     user.setAge(age.getText().toString());
-                    generator.transferToFirebase(FirebaseOperation.CREATE, user, childrenPath, this);
+                    firebaseCRUD.transferToFirebase(FirebaseOperation.CREATE, user, childrenPath, this);
                 }
                 else {
                     toastFirebaseResult("Field length < 5!");

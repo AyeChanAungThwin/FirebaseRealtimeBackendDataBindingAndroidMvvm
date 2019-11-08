@@ -28,7 +28,8 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
 
     private DataManager dataManager;
 
-    private FirebaseRealtimeCRUDGenerator generator;
+    private FirebaseRealtimeCRUDGenerator firebaseCRUD;
+    private String childrenPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,8 +39,13 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
         updateBtn.setOnClickListener(this);
         deleteBtn.setOnClickListener(this);
 
+        //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
-        generator = (FirebaseRealtimeCRUDGenerator) ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
+        //ChildrenPath From Database;
+        childrenPath = dataManager.getFirebaseChildrenUpdateOrDeletePath();
+
+
+        firebaseCRUD = (FirebaseRealtimeCRUDGenerator) ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
         Gson gson = (Gson) ((AppLayer)getApplication()).getInstance(Gson.class);
         User user = gson.fromJson(dataManager.getValue(), User.class);
 
@@ -66,15 +72,11 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
                 user.setName(name);
                 user.setAge(age);
 
-                //ChildrenPath From Database;
-                String childrenPath = dataManager.getFirebaseChildrenUpdateOrDeletePath();
-                generator.transferToFirebase(FirebaseOperation.UPDATE, user, childrenPath,this);
+                firebaseCRUD.transferToFirebase(FirebaseOperation.UPDATE, user, childrenPath,this);
                 finish();
                 break;
             case R.id.deleteBtn:
-                //ChildrenPath From Database;
-                String childrenPath2 = dataManager.getFirebaseChildrenUpdateOrDeletePath();
-                generator.transferToFirebase(FirebaseOperation.DELETE, null, childrenPath2,this);
+                firebaseCRUD.transferToFirebase(FirebaseOperation.DELETE, null, childrenPath,this);
                 finish();
                 break;
         }
@@ -88,7 +90,7 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
     }
 
     @Override
-    public void retrieveFirebaseResult(List<KeyAndValue> data) {
+    public void retrieveFirebaseData(List<KeyAndValue> data) {
 
     }
 }

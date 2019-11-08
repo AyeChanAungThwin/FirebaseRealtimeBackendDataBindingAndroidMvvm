@@ -7,5 +7,5 @@ import java.util.List;
 public interface FirebaseResult {
 
     void toastFirebaseResult(String output);
-    void retrieveFirebaseResult(List<KeyAndValue> data);
+    void retrieveFirebaseData(List<KeyAndValue> data);
 }
