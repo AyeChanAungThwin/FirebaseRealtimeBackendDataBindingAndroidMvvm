@@ -25,7 +25,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FirebaseResult, View.OnClickListener, AdapterView.OnItemClickListener {
 
-    private Button btn1;
+    private Button btn1, btn2;
     private EditText name, age;
     private ListView listView;
 
@@ -45,10 +45,12 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
 
         //Mapping
         btn1 = findViewById(R.id.btn1);
+        btn2 = findViewById(R.id.btn2);
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
         listView = findViewById(R.id.simpleListView);
         btn1.setOnClickListener(this);
+        btn2.setOnClickListener(this);
         listView.setOnItemClickListener(this);
 
         //Fascade
@@ -61,13 +63,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseCRUD.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseCRUD.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
     }
 
     @Override
@@ -100,14 +102,16 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
                     user = (User) ((AppLayer)getApplication()).getInstance(User.class);
                     user.setName(name.getText().toString());
                     user.setAge(age.getText().toString());
-                    firebaseCRUD.transferToFirebase(FirebaseOperation.CREATE, user, childrenPath, this);
+                    firebaseCRUD.execute(FirebaseOperation.CREATE, user, childrenPath, this);
                 }
                 else {
                     toastFirebaseResult("Field length < 5!");
                     Toast.makeText(getApplicationContext(), "Field length must greater than 5", Toast.LENGTH_SHORT).show();
                 }
                 break;
-                //generator.transferToFirebase(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+            case R.id.btn2:
+                    firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+                break;
         }
     }
 

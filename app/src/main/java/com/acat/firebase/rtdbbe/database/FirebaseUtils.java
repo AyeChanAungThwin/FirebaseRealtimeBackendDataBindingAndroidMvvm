@@ -1,11 +1,11 @@
-package com.acat.firebase.rtdbbe.database.utils;
+package com.acat.firebase.rtdbbe.database;
 
-public class FirebaseUtils {
+class FirebaseUtils {
 
     //Developer
     public static final String DEVELOPER_REFERENCE = "firebase_realtime_database";
-    public static final String CREATION_SUCCESS = "Upload Success!";
-    public static final String CREATION_FAILED = "Failed to upload!";
+    public static final String CREATION_SUCCESS = "Created new data!";
+    public static final String CREATION_FAILED = "Failed to create data!";
     public static final String RETRIEVE_EXISTS = "Data fetched!";
     public static final String RETRIEVE_NO_DATA = "No data is available!";
     public static final String UPDATE_SUCCESS = "Update Success!";
@@ -15,6 +15,6 @@ public class FirebaseUtils {
     public static final String FIREBASE_ERROR = "Firebase database error!";
 
     //Firebase Store Logs
-    public static final String FIREBASE_REFERENCE = "happy_time";
+    public static final String FIREBASE_REFERENCE = "transactional_activity";
     public static final String FIREBASE_LOG = "log";
 }

@@ -31,6 +31,8 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
     private FirebaseRealtimeCRUDGenerator firebaseCRUD;
     private String childrenPath;
 
+    private User userFromDB;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +49,10 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
 
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator) ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
         Gson gson = (Gson) ((AppLayer)getApplication()).getInstance(Gson.class);
-        User user = gson.fromJson(dataManager.getValue(), User.class);
+        userFromDB = gson.fromJson(dataManager.getValue(), User.class);
 
-        updateName.setText(user.getName());
-        updateAge.setText(user.getAge());
+        updateName.setText(userFromDB.getName());
+        updateAge.setText(userFromDB.getAge());
     }
 
     public void mapping() {
@@ -68,18 +70,30 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
                 String age = updateAge.getText().toString();
 
                 //User Object
-                User user = (User) ((AppLayer)getApplication()).getInstance(User.class);
-                user.setName(name);
-                user.setAge(age);
+                User updateUser = (User) ((AppLayer)getApplication()).getInstance(User.class);
+                updateUser.setName(name);
+                updateUser.setAge(age);
 
-                firebaseCRUD.transferToFirebase(FirebaseOperation.UPDATE, user, childrenPath,this);
+                if (isSameData(userFromDB, updateUser)) {
+                    toastFirebaseResult("No updates for same data!");
+                }
+                else {
+                    firebaseCRUD.execute(FirebaseOperation.UPDATE, updateUser, childrenPath, this);
+                }
                 finish();
                 break;
             case R.id.deleteBtn:
-                firebaseCRUD.transferToFirebase(FirebaseOperation.DELETE, null, childrenPath,this);
+                firebaseCRUD.execute(FirebaseOperation.DELETE, null, childrenPath,this);
                 finish();
                 break;
         }
+    }
+
+    private boolean isSameData(User userFromDB, User updateUser) {
+        if (userFromDB.getName().equals(updateUser.getName())&&userFromDB.getAge().equals(updateUser.getAge())) {
+            return true;
+        }
+        return false;
     }
 
     @Override

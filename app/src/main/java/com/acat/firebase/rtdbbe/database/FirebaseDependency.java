@@ -2,7 +2,7 @@ package com.acat.firebase.rtdbbe.database;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class FirebaseDependency {
+class FirebaseDependency {
 
     private static FirebaseDependency dependency;
 
