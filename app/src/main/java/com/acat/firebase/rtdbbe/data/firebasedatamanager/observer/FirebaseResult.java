@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.database.observer;
+package com.acat.firebase.rtdbbe.data.firebasedatamanager.observer;
 
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 

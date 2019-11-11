@@ -1,8 +1,8 @@
-package com.acat.firebase.rtdbbe.database;
+package com.acat.firebase.rtdbbe.data.firebasedatamanager;
 
 import androidx.annotation.NonNull;
 
-import com.acat.firebase.rtdbbe.database.observer.FirebaseResult;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,6 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //Facade by Aye Chan Aung Thwin
@@ -24,21 +25,50 @@ public class FirebaseRealtimeCRUDGenerator {
     private String[] splitData;
     private FirebaseOperation operation;
 
-    public void execute(FirebaseOperation operation, final Object object,
-                        String childrenPath, final FirebaseResult result) {
+    private String getChildrenPath() {
+        return childrenPath;
+    }
+
+    public void setChildrenPath(String childrenPath) {
+        this.childrenPath = childrenPath;
+    }
+
+    public void execute(FirebaseOperation operation, final FirebaseResult result) {
         //DatabaseReference
         firebasePath = (RealtimeFirebasePath) dependency.getInstance(RealtimeFirebasePath.class);
         firebasePath.setDatabaseReference(FirebaseUtils.DEVELOPER_REFERENCE);
 
-        //ChildrenPath
-        this.childrenPath = childrenPath;
+        //Children creation
+        firebasePath.setChildrenPath(getChildrenPath());
+
+        //FirebaseResult
+        this.result = result;
+
+        switch (operation) {
+            case RETRIEVE:
+                //Operation
+                this.operation=FirebaseOperation.RETRIEVE;
+                retrieve();
+                break;
+            case DELETE:
+                //Operation
+                this.operation=FirebaseOperation.DELETE;
+                delete();
+                break;
+        }
+    }
+
+    public void execute(FirebaseOperation operation, Object object, final FirebaseResult result) {
+        //DatabaseReference
+        firebasePath = (RealtimeFirebasePath) dependency.getInstance(RealtimeFirebasePath.class);
+        firebasePath.setDatabaseReference(FirebaseUtils.DEVELOPER_REFERENCE);
 
         //Object to Json Conversion
         Gson gson = (Gson) dependency.getInstance(Gson.class);
         String json = gson.toJson(object);
 
         //Children creation
-        firebasePath.setChildrenPath(childrenPath);
+        firebasePath.setChildrenPath(getChildrenPath());
 
         //FirebaseResult
         this.result = result;
@@ -53,16 +83,6 @@ public class FirebaseRealtimeCRUDGenerator {
                 //Operation
                 this.operation=FirebaseOperation.UPDATE;
                 update(json);
-                break;
-            case RETRIEVE:
-                //Operation
-                this.operation=FirebaseOperation.RETRIEVE;
-                retrieve();
-                break;
-            case DELETE:
-                //Operation
-                this.operation=FirebaseOperation.DELETE;
-                delete();
                 break;
         }
     }
@@ -149,7 +169,7 @@ public class FirebaseRealtimeCRUDGenerator {
         DatabaseReference reference = firebasePath.getChildrenPath();
         final String fakeId = reference.push().getKey();
 
-        //Upload KEY and VALUE to Firebase
+        //Upload KEY and VALUE to Firebase i.e., reference.child(KEY).setValue(VALUE);
         reference.child(fakeId).setValue(json);
 
         //Result
@@ -159,13 +179,12 @@ public class FirebaseRealtimeCRUDGenerator {
     public void update(String json){
         //Generate KEY for current path
         DatabaseReference reference = firebasePath.getChildrenPath();
-        final String fakeId = reference.push().getKey();
 
         //data creation to non-empty path to UPDATE data
         reference.setValue(json);
 
         //Split data and manage
-        splitData = childrenPath.split("/");
+        splitData = getChildrenPath().split("/");
         StringBuilder sb = null;
         for (int i=0; i<splitData.length; i++) {
             if (i< splitData.length-1) {
@@ -202,7 +221,7 @@ public class FirebaseRealtimeCRUDGenerator {
         reference.removeValue();
 
         //Split data and manage
-        splitData = childrenPath.split("/");
+        splitData = getChildrenPath().split("/");
         StringBuilder sb = null;
         for (int i=0; i<splitData.length; i++) {
             if (i< splitData.length-1) {

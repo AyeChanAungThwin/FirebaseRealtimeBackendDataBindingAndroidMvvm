@@ -1,6 +1,7 @@
 package com.acat.firebase.rtdbbe.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,10 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.acat.firebase.rtdbbe.R;
 import com.acat.firebase.rtdbbe.applicationlayer.AppLayer;
-import com.acat.firebase.rtdbbe.database.FirebaseOperation;
-import com.acat.firebase.rtdbbe.database.FirebaseRealtimeCRUDGenerator;
-import com.acat.firebase.rtdbbe.database.observer.FirebaseResult;
-import com.acat.firebase.rtdbbe.datamanager.DataManager;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseOperation;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseRealtimeCRUDGenerator;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
+import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.acat.firebase.rtdbbe.model.User;
 import com.google.gson.Gson;
@@ -29,9 +30,10 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
     private DataManager dataManager;
 
     private FirebaseRealtimeCRUDGenerator firebaseCRUD;
-    private String childrenPath;
 
     private User userFromDB;
+
+    private String childrenPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,11 +45,13 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
 
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
-        //ChildrenPath From Database;
+        //Retrieve ChildrenPath From Database;
         childrenPath = dataManager.getFirebaseChildrenUpdateOrDeletePath();
 
 
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator) ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
+        firebaseCRUD.setChildrenPath(childrenPath);
+
         Gson gson = (Gson) ((AppLayer)getApplication()).getInstance(Gson.class);
         userFromDB = gson.fromJson(dataManager.getValue(), User.class);
 
@@ -78,19 +82,20 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
                     toastFirebaseResult("No updates for same data!");
                 }
                 else {
-                    firebaseCRUD.execute(FirebaseOperation.UPDATE, updateUser, childrenPath, this);
+                    firebaseCRUD.execute(FirebaseOperation.UPDATE, updateUser, this);
                 }
                 finish();
                 break;
             case R.id.deleteBtn:
-                firebaseCRUD.execute(FirebaseOperation.DELETE, null, childrenPath,this);
+                firebaseCRUD.execute(FirebaseOperation.DELETE, this);
                 finish();
                 break;
         }
     }
 
     private boolean isSameData(User userFromDB, User updateUser) {
-        if (userFromDB.getName().equals(updateUser.getName())&&userFromDB.getAge().equals(updateUser.getAge())) {
+        if (userFromDB.getName().equals(updateUser.getName())
+                &&userFromDB.getAge().equals(updateUser.getAge())) {
             return true;
         }
         return false;

@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.database;
+package com.acat.firebase.rtdbbe.data.firebasedatamanager;
 
 class FirebaseUtils {
 
@@ -15,6 +15,6 @@ class FirebaseUtils {
     public static final String FIREBASE_ERROR = "Firebase database error!";
 
     //Firebase Store Logs
-    public static final String FIREBASE_REFERENCE = "transactional_activity";
-    public static final String FIREBASE_LOG = "log";
+    public static final String FIREBASE_COUNT = "firebase/check_update_by_client";
+    public static final String FIREBASE_LOG = "transactional_activity/logs";
 }

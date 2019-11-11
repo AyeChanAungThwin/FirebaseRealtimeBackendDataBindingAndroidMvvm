@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.datamanager;
+package com.acat.firebase.rtdbbe.data.localdatamanager;
 
 import android.content.Context;
 import android.content.SharedPreferences;

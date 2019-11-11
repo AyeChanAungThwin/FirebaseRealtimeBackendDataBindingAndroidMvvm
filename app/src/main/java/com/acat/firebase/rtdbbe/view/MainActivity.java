@@ -13,13 +13,14 @@ import android.widget.Toast;
 
 import com.acat.firebase.rtdbbe.R;
 import com.acat.firebase.rtdbbe.applicationlayer.AppLayer;
-import com.acat.firebase.rtdbbe.database.FirebaseOperation;
-import com.acat.firebase.rtdbbe.database.FirebaseRealtimeCRUDGenerator;
-import com.acat.firebase.rtdbbe.database.observer.FirebaseResult;
-import com.acat.firebase.rtdbbe.datamanager.DataManager;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseOperation;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseRealtimeCRUDGenerator;
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
+import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
 import com.acat.firebase.rtdbbe.model.CustomListView;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.acat.firebase.rtdbbe.model.User;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
 
     private FirebaseRealtimeCRUDGenerator firebaseCRUD;
     private User user;
-    private String childrenPath;
     private List<KeyAndValue> data;
 
     private DataManager dataManager;
+    private String childrenPath = "entries/registration/users";
 
     @Override
     protected void onCreate(Bundle state) {
@@ -57,19 +58,19 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
                 ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
         //Set Children Path
-        childrenPath = "entries/registration/users";
+        firebaseCRUD.setChildrenPath(childrenPath);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE,this);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
                     user = (User) ((AppLayer)getApplication()).getInstance(User.class);
                     user.setName(name.getText().toString());
                     user.setAge(age.getText().toString());
-                    firebaseCRUD.execute(FirebaseOperation.CREATE, user, childrenPath, this);
+                    firebaseCRUD.execute(FirebaseOperation.CREATE, user, this);
                 }
                 else {
                     toastFirebaseResult("Field length < 5!");
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseResult, V
                 }
                 break;
             case R.id.btn2:
-                    firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, childrenPath, this);
+                    firebaseCRUD.execute(FirebaseOperation.RETRIEVE, this);
                 break;
         }
     }

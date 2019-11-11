@@ -2,8 +2,8 @@ package com.acat.firebase.rtdbbe.applicationlayer;
 
 import android.app.Application;
 
-import com.acat.firebase.rtdbbe.datamanager.DataManager;
-import com.acat.firebase.rtdbbe.datamanager.SharedPrefHelper;
+import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
+import com.acat.firebase.rtdbbe.data.localdatamanager.SharedPrefHelper;
 
 import java.lang.reflect.InvocationTargetException;
 
