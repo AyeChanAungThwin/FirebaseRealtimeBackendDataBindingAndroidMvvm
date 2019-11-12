@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 
 public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText updateName, updateAge;
+    private EditText updateNameEditText, updateAgeEditText;
     private Button updateBtn, deleteBtn;
 
     private DataManager dataManager;
@@ -54,13 +54,13 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
         userFromDB = gson.fromJson(dataManager.getFirebaseValue(), User.class);
 
         //set EditText
-        updateName.setText(userFromDB.getName());
-        updateAge.setText(String.valueOf(userFromDB.getAge()));
+        updateNameEditText.setText(userFromDB.getName());
+        updateAgeEditText.setText(String.valueOf(userFromDB.getAge()));
     }
 
     public void mapping() {
-        updateName = findViewById(R.id.updateName);
-        updateAge = findViewById(R.id.updateAge);
+        updateNameEditText = findViewById(R.id.updateNameEditText);
+        updateAgeEditText = findViewById(R.id.updateAgeEditText);
         updateBtn = findViewById(R.id.updateBtn);
         deleteBtn = findViewById(R.id.deleteBtn);
 
@@ -72,8 +72,8 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.updateBtn:
-                String name = updateName.getText().toString();
-                int age = Integer.parseInt(updateAge.getText().toString());
+                String name = updateNameEditText.getText().toString();
+                int age = Integer.parseInt(updateAgeEditText.getText().toString());
 
                 //User Object
                 User updateUser = (User) ((AppLayer)getApplication()).getInstance(User.class);

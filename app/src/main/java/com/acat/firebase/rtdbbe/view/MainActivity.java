@@ -23,8 +23,8 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    private Button btn1;
-    private EditText name, age;
+    private Button uploadBtn;
+    private EditText nameEditText, ageEditText;
     private ListView listView;
 
     private FirebaseRealtimeCRUDGenerator<User> firebaseCRUD;
@@ -57,12 +57,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void mapping() {
         //Mapping
-        btn1 = findViewById(R.id.btn1);
-        name = findViewById(R.id.name);
-        age = findViewById(R.id.age);
+        uploadBtn = findViewById(R.id.uploadBtn);
+        nameEditText = findViewById(R.id.nameEditText);
+        ageEditText = findViewById(R.id.ageEditText);
         listView = findViewById(R.id.simpleListView);
 
-        btn1.setOnClickListener(this);
+        uploadBtn.setOnClickListener(this);
         listView.setOnItemClickListener(this);
     }
 
@@ -81,15 +81,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn1:
-                String username = name.getText().toString();
-                String userAge = age.getText().toString();
+            case R.id.uploadBtn:
+                String username = nameEditText.getText().toString();
+                String userAge = ageEditText.getText().toString();
 
                 if (username.length()>5 && userAge.length()>0 && Integer.parseInt(userAge)>0) {
                     //User Object
                     user = (User) ((AppLayer)getApplication()).getInstance(User.class);
-                    user.setName(name.getText().toString());
-                    user.setAge(Integer.parseInt(age.getText().toString()));
+                    user.setName(nameEditText.getText().toString());
+                    user.setAge(Integer.parseInt(ageEditText.getText().toString()));
                     firebaseCRUD.execute(FirebaseOperation.CREATE, user, this);
                 }
                 else {
