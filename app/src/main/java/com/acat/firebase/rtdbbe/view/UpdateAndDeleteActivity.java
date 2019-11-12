@@ -1,28 +1,22 @@
 package com.acat.firebase.rtdbbe.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.acat.firebase.rtdbbe.R;
 import com.acat.firebase.rtdbbe.applicationlayer.AppLayer;
 import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseOperation;
 import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseRealtimeCRUDGenerator;
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
-import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.acat.firebase.rtdbbe.model.User;
 import com.google.gson.Gson;
 
-import java.util.List;
-
-public class UpdateAndDeleteActivity extends AppCompatActivity implements View.OnClickListener, FirebaseResult {
+public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText updateName, updateAge;
     private Button updateBtn, deleteBtn;
@@ -39,9 +33,8 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_and_delete_activity);
+        //mapping
         mapping();
-        updateBtn.setOnClickListener(this);
-        deleteBtn.setOnClickListener(this);
 
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
@@ -64,6 +57,9 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
         updateAge = findViewById(R.id.updateAge);
         updateBtn = findViewById(R.id.updateBtn);
         deleteBtn = findViewById(R.id.deleteBtn);
+
+        updateBtn.setOnClickListener(this);
+        deleteBtn.setOnClickListener(this);
     }
 
     @Override
@@ -101,15 +97,9 @@ public class UpdateAndDeleteActivity extends AppCompatActivity implements View.O
         return false;
     }
 
-    @Override
     public void toastFirebaseResult(String output) {
         if (output!=null) {
             Toast.makeText(this, output, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void retrieveFirebaseData(List<KeyAndValue> data) {
-
     }
 }

@@ -33,6 +33,10 @@ public class DataManager {
     }
 
     public String getFirebaseChildrenUpdateOrDeletePath() {
-        return getFirebaseChildrenPath()+"/"+getKey();
+        StringBuilder sb = helper.createStringBuilder();
+        sb.append(getFirebaseChildrenPath());
+        sb.append("/");
+        sb.append(getKey());
+        return sb.toString();
     }
 }

@@ -43,4 +43,8 @@ public class SharedPrefHelper {
     public String getFirebaseChildrenPath() {
         return mSharedPreferences.getString(this.firebaseChildrenPath, null);
     }
+
+    public StringBuilder createStringBuilder() {
+        return new StringBuilder();
+    }
 }

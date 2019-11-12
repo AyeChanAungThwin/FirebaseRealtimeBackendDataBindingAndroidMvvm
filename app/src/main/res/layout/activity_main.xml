@@ -32,13 +32,6 @@
                 android:focusable="false"
                 android:text="Create"/>
 
-            <Button
-                android:id="@+id/btn2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="Refresh"/>
-
         </LinearLayout>
     </ScrollView>
 

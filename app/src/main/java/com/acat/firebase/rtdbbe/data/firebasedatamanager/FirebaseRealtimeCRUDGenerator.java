@@ -11,7 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 //Facade by Aye Chan Aung Thwin
@@ -123,6 +122,8 @@ public class FirebaseRealtimeCRUDGenerator {
                     case CREATE:
                         if (isCreatedOrUpdated) {
                             result.toastFirebaseResult(FirebaseUtils.CREATION_SUCCESS);
+                            operation = FirebaseOperation.RETRIEVE;
+                            retrieve();
                         }
                         else {
                             result.toastFirebaseResult(FirebaseUtils.CREATION_FAILED);
