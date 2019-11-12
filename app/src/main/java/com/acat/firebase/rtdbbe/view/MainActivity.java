@@ -1,5 +1,6 @@
 package com.acat.firebase.rtdbbe.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,28 +27,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private EditText name, age;
     private ListView listView;
 
-    private FirebaseRealtimeCRUDGenerator firebaseCRUD;
+    private FirebaseRealtimeCRUDGenerator<User> firebaseCRUD;
     private User user;
     private List<KeyAndValue> data;
 
     private DataManager dataManager;
-    private String childrenPath = "entries/registration/users";
+    private final String childrenPath = "entries/registration/users";
+
+    public static Intent getIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_main);
 
+        //mapping
         mapping();
 
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
 
-        //Fascade
+        //Firebase CRUD
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
                 ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
-
-        //Set Children Path
         firebaseCRUD.setChildrenPath(childrenPath);
     }
 
@@ -57,6 +61,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
         listView = findViewById(R.id.simpleListView);
+
         btn1.setOnClickListener(this);
         listView.setOnItemClickListener(this);
     }
@@ -64,13 +69,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseCRUD.execute(FirebaseOperation.RETRIEVE,this);
+        firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null,this);
     }
 
     @Override
@@ -97,11 +102,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getApplicationContext(), data.get(position).getKey(), Toast.LENGTH_SHORT).show();
-        dataManager.setKey(data.get(position).getKey());
-        dataManager.setValue(data.get(position).getValue());
+        Toast.makeText(getApplicationContext(), data.get(position).getFirebaseKey(), Toast.LENGTH_SHORT).show();
+
+        //Save ITEM in Local Database and fetch to UPDATE and DELETE
+        dataManager.setFirebaseKey(data.get(position).getFirebaseKey());
+        dataManager.setFirebaseValue(data.get(position).getFirebaseValue());
         dataManager.setFirebaseChildrenPath(childrenPath);
-        Intent intent = new Intent(this, UpdateAndDeleteActivity.class);
+        Intent intent = UpdateAndDeleteActivity.getIntent(this);
         startActivity(intent);
     }
 

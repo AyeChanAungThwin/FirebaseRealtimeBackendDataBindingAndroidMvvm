@@ -1,5 +1,7 @@
 package com.acat.firebase.rtdbbe.data.firebasedatamanager;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
@@ -15,7 +17,7 @@ import java.util.List;
 
 //Facade by Aye Chan Aung Thwin
 
-public class FirebaseRealtimeCRUDGenerator {
+public class FirebaseRealtimeCRUDGenerator<T extends FirebaseModel> {
 
     private final FirebaseDependency dependency = FirebaseDependency.getInstance();
     private RealtimeFirebasePath firebasePath;
@@ -23,6 +25,9 @@ public class FirebaseRealtimeCRUDGenerator {
     private FirebaseResult result;
     private String[] splitData;
     private FirebaseOperation operation;
+    private List<KeyAndValue> allDataListFromFirebase;
+    private Context context;
+    private boolean needUpdate = true;
 
     private String getChildrenPath() {
         return childrenPath;
@@ -32,32 +37,7 @@ public class FirebaseRealtimeCRUDGenerator {
         this.childrenPath = childrenPath;
     }
 
-    public void execute(FirebaseOperation operation, final FirebaseResult result) {
-        //DatabaseReference
-        firebasePath = (RealtimeFirebasePath) dependency.getInstance(RealtimeFirebasePath.class);
-        firebasePath.setDatabaseReference(FirebaseUtils.DEVELOPER_REFERENCE);
-
-        //Children creation
-        firebasePath.setChildrenPath(getChildrenPath());
-
-        //FirebaseResult
-        this.result = result;
-
-        switch (operation) {
-            case RETRIEVE:
-                //Operation
-                this.operation=FirebaseOperation.RETRIEVE;
-                retrieve();
-                break;
-            case DELETE:
-                //Operation
-                this.operation=FirebaseOperation.DELETE;
-                delete();
-                break;
-        }
-    }
-
-    public void execute(FirebaseOperation operation, Object object, final FirebaseResult result) {
+    public <T extends FirebaseModel> void execute(FirebaseOperation operation, T object, final FirebaseResult result) {
         //DatabaseReference
         firebasePath = (RealtimeFirebasePath) dependency.getInstance(RealtimeFirebasePath.class);
         firebasePath.setDatabaseReference(FirebaseUtils.DEVELOPER_REFERENCE);
@@ -72,97 +52,30 @@ public class FirebaseRealtimeCRUDGenerator {
         //FirebaseResult
         this.result = result;
 
+        //operation
+        this.operation = operation;
+
         switch (operation) {
             case CREATE:
                 //Operation
-                this.operation=FirebaseOperation.CREATE;
                 create(json);
                 break;
             case UPDATE:
                 //Operation
-                this.operation=FirebaseOperation.UPDATE;
+                if (!needUpdate) {
+                    result.toastFirebaseResult("No need update for same data!");
+                }
                 update(json);
                 break;
+            case RETRIEVE:
+                //Operation
+                retrieve();
+                break;
+            case DELETE:
+                //Operation
+                delete();
+                break;
         }
-    }
-
-    private void listenResult(DatabaseReference reference, final String id) {
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<KeyAndValue> data = null;
-                boolean isCreatedOrUpdated = false;
-                boolean isDeleted = true;
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot out: dataSnapshot.getChildren()) {
-                        switch (operation) {
-                            case CREATE:
-                            case UPDATE:
-                                if (out.getKey().equals(id)) {
-                                    isCreatedOrUpdated = !isCreatedOrUpdated;
-                                    break;
-                                }
-                                break;
-                            case DELETE:
-                                if (out.getKey().equals(id)) {
-                                    isDeleted = !isDeleted;
-                                    break;
-                                }
-                                break;
-                            case RETRIEVE:
-                                if (data == null) {
-                                    data = (List<KeyAndValue>) dependency.getInstance(ArrayList.class);
-                                }
-                                data.add(new KeyAndValue(out.getKey(), out.getValue(String.class)));
-                                break;
-                        }
-                    }
-                }
-                switch (operation) {
-                    case CREATE:
-                        if (isCreatedOrUpdated) {
-                            result.toastFirebaseResult(FirebaseUtils.CREATION_SUCCESS);
-                            operation = FirebaseOperation.RETRIEVE;
-                            retrieve();
-                        }
-                        else {
-                            result.toastFirebaseResult(FirebaseUtils.CREATION_FAILED);
-                        }
-                        break;
-                    case UPDATE:
-                        if (isCreatedOrUpdated) {
-                            result.toastFirebaseResult(FirebaseUtils.UPDATE_SUCCESS);
-                        }
-                        else {
-                            result.toastFirebaseResult(FirebaseUtils.UPDATE_FAILED);
-                        }
-                        break;
-                    case RETRIEVE:
-                        if (data!=null) {
-                            result.retrieveFirebaseData(data);
-                            //result.toastFirebaseResult(FirebaseUtils.RETRIEVE_EXISTS);
-                        }
-                        else {
-                            result.retrieveFirebaseData(null);
-                            result.toastFirebaseResult(FirebaseUtils.RETRIEVE_NO_DATA);
-                        }
-                        break;
-                    case DELETE:
-                        if (isDeleted) {
-                            result.toastFirebaseResult(FirebaseUtils.DELETE_SUCCESS);
-                        }
-                        else {
-                            result.toastFirebaseResult(FirebaseUtils.DELETE_FAILED);
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                result.toastFirebaseResult(FirebaseUtils.FIREBASE_ERROR);
-            }
-        });
     }
 
     public void create(String json){
@@ -241,5 +154,86 @@ public class FirebaseRealtimeCRUDGenerator {
 
         //Result
         listenResult(reference, splitData[splitData.length-1]);
+    }
+
+    private void listenResult(DatabaseReference reference, final String id) {
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allDataListFromFirebase = null;
+                boolean isCreatedOrUpdated = false;
+                boolean isDeleted = true;
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot out: dataSnapshot.getChildren()) {
+                        switch (operation) {
+                            case CREATE:
+                            case UPDATE:
+                                if (out.getKey().equals(id)) {
+                                    isCreatedOrUpdated = !isCreatedOrUpdated;
+                                    break;
+                                }
+                                break;
+                            case DELETE:
+                                if (out.getKey().equals(id)) {
+                                    isDeleted = !isDeleted;
+                                    break;
+                                }
+                                break;
+                            case RETRIEVE:
+                                if (allDataListFromFirebase == null) {
+                                    allDataListFromFirebase = (List<KeyAndValue>) dependency.getInstance(ArrayList.class);
+                                }
+                                allDataListFromFirebase.add(new KeyAndValue(out.getKey(), out.getValue(String.class)));
+                                break;
+                        }
+                    }
+                }
+                switch (operation) {
+                    case CREATE:
+                        if (isCreatedOrUpdated) {
+                            result.toastFirebaseResult(FirebaseUtils.CREATION_SUCCESS);
+
+                            //After Creation, refresh listView i.e., RETRIEVE
+                            operation = FirebaseOperation.RETRIEVE;
+                            retrieve();
+                        }
+                        else {
+                            result.toastFirebaseResult(FirebaseUtils.CREATION_FAILED);
+                        }
+                        break;
+                    case UPDATE:
+                        if (isCreatedOrUpdated) {
+                            result.toastFirebaseResult(FirebaseUtils.UPDATE_SUCCESS);
+                        }
+                        else {
+                            result.toastFirebaseResult(FirebaseUtils.UPDATE_FAILED);
+                        }
+                        break;
+                    case RETRIEVE:
+                        if (allDataListFromFirebase!=null) {
+                            result.retrieveFirebaseData(allDataListFromFirebase);
+                            //result.toastFirebaseResult(FirebaseUtils.RETRIEVE_EXISTS);
+                        }
+                        else {
+                            result.retrieveFirebaseData(null);
+                            result.toastFirebaseResult(FirebaseUtils.RETRIEVE_NO_DATA);
+                        }
+                        break;
+                    case DELETE:
+                        if (isDeleted) {
+                            result.toastFirebaseResult(FirebaseUtils.DELETE_SUCCESS);
+                        }
+                        else {
+                            result.toastFirebaseResult(FirebaseUtils.DELETE_FAILED);
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                result.toastFirebaseResult(FirebaseUtils.FIREBASE_ERROR);
+            }
+        });
     }
 }

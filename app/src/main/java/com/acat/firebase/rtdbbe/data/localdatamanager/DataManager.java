@@ -8,19 +8,19 @@ public class DataManager {
         this.helper = helper;
     }
 
-    public void setKey(String key) {
-        helper.putKey(key);
+    public void setFirebaseKey(String firebaseKey) {
+        helper.putKey(firebaseKey);
     }
 
-    public String getKey() {
+    public String getFirebaseKey() {
         return helper.getKey();
     }
 
-    public void setValue(String json) {
+    public void setFirebaseValue(String json) {
         helper.putValue(json);
     }
 
-    public String getValue() {
+    public String getFirebaseValue() {
         return helper.getValue();
     }
 
@@ -36,7 +36,7 @@ public class DataManager {
         StringBuilder sb = helper.createStringBuilder();
         sb.append(getFirebaseChildrenPath());
         sb.append("/");
-        sb.append(getKey());
+        sb.append(getFirebaseKey());
         return sb.toString();
     }
 }

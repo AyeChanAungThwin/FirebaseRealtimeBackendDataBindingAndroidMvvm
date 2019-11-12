@@ -1,6 +1,8 @@
 package com.acat.firebase.rtdbbe.model;
 
-public class User {
+import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseModel;
+
+public class User implements FirebaseModel {
 
     private String name;
     private String age;

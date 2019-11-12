@@ -14,17 +14,17 @@ import java.util.List;
 
 public class CustomListView extends BaseAdapter {
 
-    private List<KeyAndValue> data;
+    private List<KeyAndValue> allDataListFromFirebase;
     private Context context;
 
-    public CustomListView(Context context, List<KeyAndValue> data) {
+    public CustomListView(Context context, List<KeyAndValue> allDataListFromFirebase) {
         this.context = context;
-        this.data = data;
+        this.allDataListFromFirebase = allDataListFromFirebase;
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return allDataListFromFirebase.size();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class CustomListView extends BaseAdapter {
         TextView textView2 = convertView.findViewById(R.id.customName);
         TextView textView3 = convertView.findViewById(R.id.customAge);
 
-        textView1.setText(data.get(position).getKey());
+        textView1.setText(allDataListFromFirebase.get(position).getFirebaseKey());
         Gson gson = new Gson();
-        User user = gson.fromJson(data.get(position).getValue(), User.class);
+        User user = gson.fromJson(allDataListFromFirebase.get(position).getFirebaseValue(), User.class);
         textView2.setText(user.getName());
         textView3.setText(user.getAge());
 

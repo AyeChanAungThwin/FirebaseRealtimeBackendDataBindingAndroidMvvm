@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 
 public class SharedPrefHelper {
 
-    private String data = "SAVE_DATA";
-    private String key = "KEY";
-    private String value = "VALUE";
+    private String data = "FIREBASE_DATA";
+    private String key = "FIREBASE_KEY";
+    private String value = "FIREBASE_VALUE";
     private String firebaseChildrenPath = "FIREBASE_CHILDREN_PATH";
 
     private SharedPreferences mSharedPreferences;

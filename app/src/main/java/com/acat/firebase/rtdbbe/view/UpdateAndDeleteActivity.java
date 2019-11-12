@@ -1,5 +1,7 @@
 package com.acat.firebase.rtdbbe.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,32 +24,36 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
     private Button updateBtn, deleteBtn;
 
     private DataManager dataManager;
-
+    private String childrenPath;
     private FirebaseRealtimeCRUDGenerator firebaseCRUD;
-
     private User userFromDB;
 
-    private String childrenPath;
+    public static Intent getIntent(Context context) {
+        return new Intent(context, UpdateAndDeleteActivity.class);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_and_delete_activity);
+
         //mapping
         mapping();
 
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
-        //Retrieve ChildrenPath From Database;
         childrenPath = dataManager.getFirebaseChildrenUpdateOrDeletePath();
 
-
-        firebaseCRUD = (FirebaseRealtimeCRUDGenerator) ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
+        //Firebase CRUD
+        firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
+                ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
         firebaseCRUD.setChildrenPath(childrenPath);
 
+        //Generate Java Object User from JSON
         Gson gson = (Gson) ((AppLayer)getApplication()).getInstance(Gson.class);
-        userFromDB = gson.fromJson(dataManager.getValue(), User.class);
+        userFromDB = gson.fromJson(dataManager.getFirebaseValue(), User.class);
 
+        //set EditText
         updateName.setText(userFromDB.getName());
         updateAge.setText(userFromDB.getAge());
     }
@@ -83,7 +89,7 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
                 finish();
                 break;
             case R.id.deleteBtn:
-                firebaseCRUD.execute(FirebaseOperation.DELETE, this);
+                firebaseCRUD.execute(FirebaseOperation.DELETE, null, this);
                 finish();
                 break;
         }

@@ -2,31 +2,31 @@ package com.acat.firebase.rtdbbe.model;
 
 public class KeyAndValue {
 
-    private String key;
-    private String value;
+    private String firebaseKey;
+    private String firebaseValue;
 
     public KeyAndValue() {
 
     }
 
-    public KeyAndValue(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public KeyAndValue(String firebaseKey, String firebaseValue) {
+        this.firebaseKey = firebaseKey;
+        this.firebaseValue = firebaseValue;
     }
 
-    public String getKey() {
-        return key;
+    public String getFirebaseKey() {
+        return firebaseKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setFirebaseKey(String firebaseKey) {
+        this.firebaseKey = firebaseKey;
     }
 
-    public String getValue() {
-        return value;
+    public String getFirebaseValue() {
+        return firebaseValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setFirebaseValue(String firebaseValue) {
+        this.firebaseValue = firebaseValue;
     }
 }
