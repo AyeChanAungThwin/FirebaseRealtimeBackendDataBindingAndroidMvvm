@@ -85,15 +85,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 String username = name.getText().toString();
                 String userAge = age.getText().toString();
 
-                if (username.length()>5 && !userAge.isEmpty()) {
+                if (username.length()>5 && userAge.length()>0 && Integer.parseInt(userAge)>0) {
                     //User Object
                     user = (User) ((AppLayer)getApplication()).getInstance(User.class);
                     user.setName(name.getText().toString());
-                    user.setAge(age.getText().toString());
+                    user.setAge(Integer.parseInt(age.getText().toString()));
                     firebaseCRUD.execute(FirebaseOperation.CREATE, user, this);
                 }
                 else {
-                    toastFirebaseResult("Field length < 5!");
+                    toastFirebaseResult("Field length must greater than 5!");
                     Toast.makeText(getApplicationContext(), "Field length must greater than 5", Toast.LENGTH_SHORT).show();
                 }
                 break;

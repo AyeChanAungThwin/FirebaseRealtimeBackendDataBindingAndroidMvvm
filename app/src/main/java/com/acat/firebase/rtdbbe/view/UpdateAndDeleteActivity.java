@@ -55,7 +55,7 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
 
         //set EditText
         updateName.setText(userFromDB.getName());
-        updateAge.setText(userFromDB.getAge());
+        updateAge.setText(String.valueOf(userFromDB.getAge()));
     }
 
     public void mapping() {
@@ -73,7 +73,7 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.updateBtn:
                 String name = updateName.getText().toString();
-                String age = updateAge.getText().toString();
+                int age = Integer.parseInt(updateAge.getText().toString());
 
                 //User Object
                 User updateUser = (User) ((AppLayer)getApplication()).getInstance(User.class);
@@ -97,7 +97,7 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
 
     private boolean isSameData(User userFromDB, User updateUser) {
         if (userFromDB.getName().equals(updateUser.getName())
-                &&userFromDB.getAge().equals(updateUser.getAge())) {
+                &&userFromDB.getAge()==(updateUser.getAge())) {
             return true;
         }
         return false;

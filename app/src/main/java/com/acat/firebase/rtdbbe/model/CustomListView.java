@@ -48,7 +48,7 @@ public class CustomListView extends BaseAdapter {
         Gson gson = new Gson();
         User user = gson.fromJson(allDataListFromFirebase.get(position).getFirebaseValue(), User.class);
         textView2.setText(user.getName());
-        textView3.setText(user.getAge());
+        textView3.setText(String.valueOf(user.getAge()));
 
         return convertView;
     }
