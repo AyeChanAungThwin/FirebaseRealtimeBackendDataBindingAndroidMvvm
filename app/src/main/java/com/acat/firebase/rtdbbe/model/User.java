@@ -1,34 +1,34 @@
 package com.acat.firebase.rtdbbe.model;
 
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseModel;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseModel;
 
 public class User implements FirebaseModel {
 
-    private String name;
-    private int age;
+    private String email;
+    private String password;
 
     public User() {
 
     }
 
-    public User(String name, int age) {
-        this.name = name;
-        this.age = age;
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getAge() {
-        return age;
+    public String getPassword() {
+        return password;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

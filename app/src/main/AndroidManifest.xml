@@ -3,7 +3,7 @@
     package="com.acat.firebase.rtdbbe">
 
     <application
-        android:name=".applicationlayer.AppLayer"
+        android:name=".application.AppLayer"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

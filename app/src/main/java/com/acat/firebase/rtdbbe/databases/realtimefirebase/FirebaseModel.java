@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.data.firebasedatamanager;
+package com.acat.firebase.rtdbbe.databases.realtimefirebase;
 
 import java.io.Serializable;
 

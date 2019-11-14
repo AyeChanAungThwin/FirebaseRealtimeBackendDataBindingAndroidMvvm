@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.data.firebasedatamanager;
+package com.acat.firebase.rtdbbe.databases.realtimefirebase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

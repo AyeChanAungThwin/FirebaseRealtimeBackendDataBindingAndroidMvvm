@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.data.firebasedatamanager;
+package com.acat.firebase.rtdbbe.databases.realtimefirebase;
 
 public enum FirebaseOperation {
     CREATE, UPDATE, RETRIEVE, DELETE

@@ -10,41 +10,42 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
+
 import com.acat.firebase.rtdbbe.R;
-import com.acat.firebase.rtdbbe.applicationlayer.AppLayer;
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseOperation;
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseRealtimeCRUDGenerator;
-import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
+import com.acat.firebase.rtdbbe.application.AppLayer;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseOperation;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseRealtimeCRUDGenerator;
+import com.acat.firebase.rtdbbe.databases.localdatamanager.DataManager;
+import com.acat.firebase.rtdbbe.databinding.MainActivityBinding;
 import com.acat.firebase.rtdbbe.model.CustomListView;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
-import com.acat.firebase.rtdbbe.model.User;
+import com.acat.firebase.rtdbbe.viewmodel.UploadOrUpdateViewModel;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    private Button uploadBtn;
-    private EditText nameEditText, ageEditText;
-    private ListView listView;
+    //data Binding
+    MainActivityBinding mBinding;
 
-    private FirebaseRealtimeCRUDGenerator<User> firebaseCRUD;
-    private User user;
+    //realtime firebase database
+    private FirebaseRealtimeCRUDGenerator firebaseCRUD;
     private List<KeyAndValue> data;
 
+    //local database
     private DataManager dataManager;
+    //childrenPath
     private final String childrenPath = "entries/registration/users";
-
-    public static Intent getIntent(Context context) {
-        return new Intent(context, MainActivity.class);
-    }
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_main);
-
-        //mapping
-        mapping();
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main_activity);
+        mBinding.setViewModel(new UploadOrUpdateViewModel(this));
+        mBinding.executePendingBindings();
+        mBinding.simpleListView.setOnItemClickListener(this);
 
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
@@ -53,17 +54,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
                 ((AppLayer)getApplication()).getInstance(FirebaseRealtimeCRUDGenerator.class);
         firebaseCRUD.setChildrenPath(childrenPath);
-    }
-
-    private void mapping() {
-        //Mapping
-        uploadBtn = findViewById(R.id.uploadBtn);
-        nameEditText = findViewById(R.id.nameEditText);
-        ageEditText = findViewById(R.id.ageEditText);
-        listView = findViewById(R.id.simpleListView);
-
-        uploadBtn.setOnClickListener(this);
-        listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -78,31 +68,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null,this);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.uploadBtn:
-                String username = nameEditText.getText().toString();
-                String userAge = ageEditText.getText().toString();
-
-                if (username.length()>5 && userAge.length()>0 && Integer.parseInt(userAge)>0) {
-                    //User Object
-                    user = (User) ((AppLayer)getApplication()).getInstance(User.class);
-                    user.setName(nameEditText.getText().toString());
-                    user.setAge(Integer.parseInt(ageEditText.getText().toString()));
-                    firebaseCRUD.execute(FirebaseOperation.CREATE, user, this);
-                }
-                else {
-                    toastFirebaseResult("Field length must greater than 5!");
-                    Toast.makeText(getApplicationContext(), "Field length must greater than 5", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
+    @BindingAdapter("android:toast")
+    public static void onBtnClick(View v, String message) {
+        if (message!=null)
+        Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getApplicationContext(), data.get(position).getFirebaseKey(), Toast.LENGTH_SHORT).show();
+        toastFirebaseResult(data.get(position).getFirebaseKey());
 
         //Save ITEM in Local Database and fetch to UPDATE and DELETE
         dataManager.setFirebaseKey(data.get(position).getFirebaseKey());
@@ -113,15 +87,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void toastFirebaseResult(String output) {
+        if (output!=null)
         Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
     }
 
     public void retrieveFirebaseData(final List<KeyAndValue> data) {
         this.data = data;
         if (data==null) {
-            listView.setAdapter(null); //Clear ListView Here
+            mBinding.simpleListView.setAdapter(null); //Clear ListView Here
             return;
         }
-        listView.setAdapter(new CustomListView(this, data));
+        mBinding.simpleListView.setAdapter(new CustomListView(this, data));
     }
 }

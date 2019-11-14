@@ -1,10 +1,10 @@
-package com.acat.firebase.rtdbbe.data.firebasedatamanager;
+package com.acat.firebase.rtdbbe.databases.realtimefirebase;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.observer.FirebaseResult;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,7 +17,7 @@ import java.util.List;
 
 //Facade by Aye Chan Aung Thwin
 
-public class FirebaseRealtimeCRUDGenerator<T extends FirebaseModel> {
+public class FirebaseRealtimeCRUDGenerator {
 
     private final FirebaseDependency dependency = FirebaseDependency.getInstance();
     private RealtimeFirebasePath firebasePath;

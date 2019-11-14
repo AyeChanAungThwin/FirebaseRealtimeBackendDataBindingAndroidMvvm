@@ -1,4 +1,4 @@
-package com.acat.firebase.rtdbbe.data.localdatamanager;
+package com.acat.firebase.rtdbbe.databases.localdatamanager;
 
 public class DataManager {
 

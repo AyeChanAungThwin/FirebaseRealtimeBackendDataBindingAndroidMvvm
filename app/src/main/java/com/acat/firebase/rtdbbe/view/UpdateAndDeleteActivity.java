@@ -11,10 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.acat.firebase.rtdbbe.R;
-import com.acat.firebase.rtdbbe.applicationlayer.AppLayer;
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseOperation;
-import com.acat.firebase.rtdbbe.data.firebasedatamanager.FirebaseRealtimeCRUDGenerator;
-import com.acat.firebase.rtdbbe.data.localdatamanager.DataManager;
+import com.acat.firebase.rtdbbe.application.AppLayer;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseOperation;
+import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseRealtimeCRUDGenerator;
+import com.acat.firebase.rtdbbe.databases.localdatamanager.DataManager;
 import com.acat.firebase.rtdbbe.model.User;
 import com.google.gson.Gson;
 
@@ -54,8 +54,8 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
         userFromDB = gson.fromJson(dataManager.getFirebaseValue(), User.class);
 
         //set EditText
-        updateNameEditText.setText(userFromDB.getName());
-        updateAgeEditText.setText(String.valueOf(userFromDB.getAge()));
+        updateNameEditText.setText(userFromDB.getEmail());
+        updateAgeEditText.setText(String.valueOf(userFromDB.getPassword()));
     }
 
     public void mapping() {
@@ -73,18 +73,23 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.updateBtn:
                 String name = updateNameEditText.getText().toString();
-                int age = Integer.parseInt(updateAgeEditText.getText().toString());
+                String age = updateAgeEditText.getText().toString();
 
                 //User Object
                 User updateUser = (User) ((AppLayer)getApplication()).getInstance(User.class);
-                updateUser.setName(name);
-                updateUser.setAge(age);
+                updateUser.setEmail(name);
+                updateUser.setPassword(age);
 
                 if (isSameData(userFromDB, updateUser)) {
                     toastFirebaseResult("No updates for same data!");
                 }
                 else {
-                    firebaseCRUD.execute(FirebaseOperation.UPDATE, updateUser, this);
+                    if (updateUser.getEmail().length()>5 && updateUser.getPassword().length()>0) {
+                        firebaseCRUD.execute(FirebaseOperation.UPDATE, updateUser, this);
+                    }
+                    else {
+                        toastFirebaseResult("Field length must be greather than 5.");
+                    }
                 }
                 finish();
                 break;
@@ -96,8 +101,8 @@ public class UpdateAndDeleteActivity extends BaseActivity implements View.OnClic
     }
 
     private boolean isSameData(User userFromDB, User updateUser) {
-        if (userFromDB.getName().equals(updateUser.getName())
-                &&userFromDB.getAge()==(updateUser.getAge())) {
+        if (userFromDB.getEmail().equals(updateUser.getEmail())
+                &&userFromDB.getPassword().equals(updateUser.getPassword())) {
             return true;
         }
         return false;
