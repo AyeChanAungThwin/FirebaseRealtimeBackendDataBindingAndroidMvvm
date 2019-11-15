@@ -26,7 +26,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     //local database
     private DataManager dataManager;
 
-    //data Binding
+    //Data Binding
     MainActivityBinding mBinding;
 
     //realtime firebase database
@@ -42,8 +42,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
 
+        //Data Binding
         mBinding = DataBindingUtil.setContentView(this, R.layout.main_activity);
-        mBinding.setViewModel(new MainViewModel(childrenPath,this));
+        mBinding.setViewModel(new MainViewModel(childrenPath, this));
         mBinding.simpleListView.setOnItemClickListener(this);
 
         //Firebase CRUD
@@ -65,26 +66,28 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     @BindingAdapter("android:toast")
-    public static void onBtnClick(View v, String message) {
-        if (message!=null)
-        Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
+    public static void toastFieldErrorResult(View v, String message) {
+        if (message!=null) {
+            Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         toastFirebaseResult(data.get(position).getFirebaseKey());
 
-        //Save ITEM in Local Database and fetch them to UPDATE and DELETE
-        dataManager.setFirebaseKey(data.get(position).getFirebaseKey());
-        dataManager.setFirebaseValue(data.get(position).getFirebaseValue());
-        dataManager.setFirebaseChildrenPath(childrenPath);
+        //Save ITEM in Local Database and fetch them for UPDATE and DELETE
+        dataManager.saveClickItemFromList(data, position, childrenPath);
+
+        //Go to another Activity
         Intent intent = UpdateAndDeleteActivity.getIntent(this);
         startActivity(intent);
     }
 
     public void toastFirebaseResult(String output) {
-        if (output!=null)
-        Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
+        if (output!=null) {
+            Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void retrieveFirebaseData(final List<KeyAndValue> data) {

@@ -58,7 +58,7 @@ public class MainViewModel extends BaseObservable {
     public void onCreateNewData() {
         switch (isInputValid()) {
             case 0:
-                setToastMessage("Please enter valid email address!");
+                setToastMessage("Please enter both fields");
                 break;
             case 1:
                 setToastMessage("Password length must greater than 5!");
@@ -68,14 +68,13 @@ public class MainViewModel extends BaseObservable {
                 crud.setChildrenPath(childrenPath);
                 crud.execute(FirebaseOperation.CREATE, user, result);
                 break;
-            case 3:
-                setToastMessage("Please enter both fields");
-                break;
+            default:
+                setToastMessage("Please enter valid email address!");
         }
     }
 
     public int isInputValid() {
-        if (getEmail().length()==0||!Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches()) {
+        if (TextUtils.isEmpty(getEmail())&&TextUtils.isEmpty(getPassword())) {
             return 0;
         }
         else if (TextUtils.isEmpty(getPassword())||getPassword().length()<=5) {
@@ -86,9 +85,8 @@ public class MainViewModel extends BaseObservable {
                 && getPassword().length()>5) {
             return 2;
         }
-        else if(getEmail().length()==0&&getPassword().length()==0) {
+        else {
             return 3;
         }
-        return -1;
     }
 }

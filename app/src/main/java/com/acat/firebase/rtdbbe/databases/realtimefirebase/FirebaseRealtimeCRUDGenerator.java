@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.acat.firebase.rtdbbe.databases.localdatamanager.DataManager;
+import com.acat.firebase.rtdbbe.databases.localdatamanager.SharedPrefHelper;
 import com.acat.firebase.rtdbbe.databases.realtimefirebase.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +28,6 @@ public class FirebaseRealtimeCRUDGenerator {
     private String[] splitData;
     private FirebaseOperation operation;
     private List<KeyAndValue> allDataListFromFirebase;
-    private Context context;
-    private boolean needUpdate = true;
 
     private String getChildrenPath() {
         return childrenPath;
@@ -52,7 +52,7 @@ public class FirebaseRealtimeCRUDGenerator {
         //FirebaseResult
         this.result = result;
 
-        //operation
+        //Operation
         this.operation = operation;
 
         switch (operation) {
@@ -62,9 +62,6 @@ public class FirebaseRealtimeCRUDGenerator {
                 break;
             case UPDATE:
                 //Operation
-                if (!needUpdate) {
-                    result.toastFirebaseResult("No need update for same data!");
-                }
                 update(json);
                 break;
             case RETRIEVE:

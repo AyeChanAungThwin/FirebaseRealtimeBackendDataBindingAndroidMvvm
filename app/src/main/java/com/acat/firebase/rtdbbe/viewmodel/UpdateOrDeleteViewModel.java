@@ -2,6 +2,7 @@ package com.acat.firebase.rtdbbe.viewmodel;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 
 import androidx.databinding.BaseObservable;
@@ -14,6 +15,8 @@ import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseRealtimeCRUDG
 import com.acat.firebase.rtdbbe.databases.realtimefirebase.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.model.User;
 import com.google.gson.Gson;
+
+import org.w3c.dom.Text;
 
 public class UpdateOrDeleteViewModel extends BaseObservable {
 
@@ -72,12 +75,12 @@ public class UpdateOrDeleteViewModel extends BaseObservable {
                 crud.setChildrenPath(dataManager.getFirebaseChildrenUpdateOrDeletePath());
                 if (isSameUser()) {
                     setToastMessage("No updates for same data!");
-                    ((Activity)result).finish();
+                    ((Activity)result).finish(); //Destroy the activity
                 }
                 else {
                     //Update New Data from fields
-                    crud.execute(FirebaseOperation.UPDATE, user, result);
-                    ((Activity)result).finish();
+                    crud.execute(FirebaseOperation.UPDATE, this.user, result);
+                    ((Activity)result).finish(); //Destroy the activity
                 }
                 break;
             case 3:
@@ -103,7 +106,7 @@ public class UpdateOrDeleteViewModel extends BaseObservable {
     public void onDelete() {
         switch (isInputValid()) {
             case 0:
-                setToastMessage("Please enter valid email address!");
+                setToastMessage("Please enter both fields");
                 break;
             case 1:
                 setToastMessage("Password length must greater than 5!");
@@ -114,14 +117,13 @@ public class UpdateOrDeleteViewModel extends BaseObservable {
                 crud.execute(FirebaseOperation.DELETE, null, result);
                 ((Activity)result).finish();
                 break;
-            case 3:
-                setToastMessage("Please enter both fields");
-                break;
+            default:
+                setToastMessage("Please enter valid email address!");
         }
     }
 
     public int isInputValid() {
-        if (getEmail().length()==0||!Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches()) {
+        if (TextUtils.isEmpty(getEmail())&&TextUtils.isEmpty(getPassword())) {
             return 0;
         }
         else if (TextUtils.isEmpty(getPassword())||getPassword().length()<=5) {
@@ -132,9 +134,8 @@ public class UpdateOrDeleteViewModel extends BaseObservable {
                 && getPassword().length()>5) {
             return 2;
         }
-        else if(getEmail().length()==0&&getPassword().length()==0) {
+        else {
             return 3;
         }
-        return -1;
     }
 }

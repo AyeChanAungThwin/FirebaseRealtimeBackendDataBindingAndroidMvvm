@@ -1,5 +1,9 @@
 package com.acat.firebase.rtdbbe.databases.localdatamanager;
 
+import com.acat.firebase.rtdbbe.model.KeyAndValue;
+
+import java.util.List;
+
 public class DataManager {
 
     private SharedPrefHelper helper;
@@ -38,5 +42,11 @@ public class DataManager {
         sb.append("/");
         sb.append(getFirebaseKey());
         return sb.toString();
+    }
+
+    public void saveClickItemFromList(List<KeyAndValue> data, int position, String childrenPath) {
+        this.setFirebaseKey(data.get(position).getFirebaseKey());
+        this.setFirebaseValue(data.get(position).getFirebaseValue());
+        this.setFirebaseChildrenPath(childrenPath);
     }
 }

@@ -39,6 +39,7 @@ public class UpdateAndDeleteActivity extends BaseActivity {
         mBinding.setViewModel(new UpdateOrDeleteViewModel(dataManager, this));
     }
 
+    @Override
     public void toastFirebaseResult(String output) {
         if (output!=null) {
             Toast.makeText(this, output, Toast.LENGTH_SHORT).show();
@@ -46,7 +47,7 @@ public class UpdateAndDeleteActivity extends BaseActivity {
     }
 
     @BindingAdapter("android:toast")
-    public static void showToast(View v, String message) {
+    public static void toastFieldErrorResult(View v, String message) {
         if (message!=null)
             Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
     }

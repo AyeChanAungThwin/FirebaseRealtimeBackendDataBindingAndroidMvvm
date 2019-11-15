@@ -9,11 +9,6 @@ import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity implements FirebaseResult {
 
-    @Override
-    public void toastFirebaseResult(String output) {
-
-    }
-
     //Don't use this method in UpdateAndDeleteActivity
     @Override
     public void retrieveFirebaseData(List<KeyAndValue> data) {
