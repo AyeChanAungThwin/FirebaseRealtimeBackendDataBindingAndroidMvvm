@@ -2,7 +2,6 @@ package com.acat.firebase.rtdbbe.viewmodel;
 
 import android.app.Activity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 
 import androidx.databinding.BaseObservable;
@@ -15,8 +14,6 @@ import com.acat.firebase.rtdbbe.databases.realtimefirebase.FirebaseRealtimeCRUDG
 import com.acat.firebase.rtdbbe.databases.realtimefirebase.observer.FirebaseResult;
 import com.acat.firebase.rtdbbe.model.User;
 import com.google.gson.Gson;
-
-import org.w3c.dom.Text;
 
 public class UpdateOrDeleteViewModel extends BaseObservable {
 

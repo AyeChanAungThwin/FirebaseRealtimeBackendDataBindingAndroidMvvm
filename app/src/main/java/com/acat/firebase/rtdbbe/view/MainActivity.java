@@ -65,13 +65,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         firebaseCRUD.execute(FirebaseOperation.RETRIEVE, null,this);
     }
 
-    @BindingAdapter("android:toast")
-    public static void toastFieldErrorResult(View v, String message) {
-        if (message!=null) {
-            Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         toastFirebaseResult(data.get(position).getFirebaseKey());
@@ -97,5 +90,12 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             return;
         }
         mBinding.simpleListView.setAdapter(new CustomListView(this, data));
+    }
+
+    @BindingAdapter("android:toast")
+    public static void toastFieldErrorResult(View v, String message) {
+        if (message!=null) {
+            Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 }
