@@ -65,7 +65,6 @@ public class MainViewModel extends BaseObservable {
                 break;
             case 2:
                 FirebaseRealtimeCRUDGenerator crud = new FirebaseRealtimeCRUDGenerator();
-                crud = new FirebaseRealtimeCRUDGenerator();
                 crud.setChildrenPath(childrenPath);
                 crud.execute(FirebaseOperation.CREATE, user, result);
                 break;
