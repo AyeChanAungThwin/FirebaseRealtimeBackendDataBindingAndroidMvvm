@@ -1,45 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ScrollView
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.acat.firebase.rtdbbe.viewmodel.UpdateOrDeleteViewModel" />
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:hint="Update Name Here"
+            android:text="@={viewModel.email}"/>
 
-            <EditText
-                android:id="@+id/updateNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Name"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Update Age Here"
+            android:text="@={viewModel.password}"/>
 
-            <EditText
-                android:id="@+id/updateAgeEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Age"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:text="Update"
+            android:onClick="@{()->viewModel.onUpdate()}"
+            android:toast="@{viewModel.toastMessage}"/>
 
-            <Button
-                android:id="@+id/updateBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="Update"/>
-
-            <Button
-                android:id="@+id/deleteBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="Delete"/>
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:text="Delete"
+            android:onClick="@{()->viewModel.onDelete()}"/>
+    </LinearLayout>
+</layout>

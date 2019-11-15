@@ -1,13 +1,16 @@
 package com.acat.firebase.rtdbbe.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.acat.firebase.rtdbbe.R;
+import com.acat.firebase.rtdbbe.databinding.CustomListViewBinding;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -39,17 +42,14 @@ public class CustomListView extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(context).inflate(R.layout.custom_list_view, null);
-        TextView textView1 = convertView.findViewById(R.id.customKey);
-        TextView textView2 = convertView.findViewById(R.id.customName);
-        TextView textView3 = convertView.findViewById(R.id.customAge);
+        //Check Log if key is available!
+        Log.d("FIREBASE KEY ---> ", allDataListFromFirebase.get(position).getFirebaseKey());
 
-        textView1.setText(allDataListFromFirebase.get(position).getFirebaseKey());
+        //Data binding
+        CustomListViewBinding clvBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.custom_list_view, parent, false);
         Gson gson = new Gson();
         User user = gson.fromJson(allDataListFromFirebase.get(position).getFirebaseValue(), User.class);
-        textView2.setText(user.getEmail());
-        textView3.setText(String.valueOf(user.getPassword()));
-
-        return convertView;
+        clvBinding.setUserModel(user);
+        return clvBinding.getRoot();
     }
 }

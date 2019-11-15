@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <import type="com.acat.firebase.rtdbbe.utils.StringUtils"/>
         <variable
             name="viewModel"
-            type="com.acat.firebase.rtdbbe.viewmodel.UploadOrUpdateViewModel" />
+            type="com.acat.firebase.rtdbbe.viewmodel.MainViewModel" />
     </data>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -21,14 +21,12 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/nameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter Email"
                     android:text="@={viewModel.email}"/>
 
                 <EditText
-                    android:id="@+id/ageEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -36,16 +34,20 @@
                     android:text="@={viewModel.password}"/>
 
                 <Button
-                    android:id="@+id/uploadBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:onClick="@{()->viewModel.onUploadOrUpdate()}"
+                    android:onClick="@{()->viewModel.onCreateNewData()}"
                     android:text="Upload New Person"
                     android:toast="@{viewModel.toastMessage}"/>
 
             </LinearLayout>
         </ScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dip"
+            android:background="#555"/>
 
         <TextView
             android:layout_width="match_parent"

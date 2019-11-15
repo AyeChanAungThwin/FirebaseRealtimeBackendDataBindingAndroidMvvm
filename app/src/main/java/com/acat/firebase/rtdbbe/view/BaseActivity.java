@@ -14,6 +14,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
 
     }
 
+    //Don't use this method in UpdateAndDeleteActivity
     @Override
     public void retrieveFirebaseData(List<KeyAndValue> data) {
 

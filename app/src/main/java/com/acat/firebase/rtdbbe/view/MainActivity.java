@@ -1,13 +1,9 @@
 package com.acat.firebase.rtdbbe.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.databinding.BindingAdapter;
@@ -21,11 +17,14 @@ import com.acat.firebase.rtdbbe.databases.localdatamanager.DataManager;
 import com.acat.firebase.rtdbbe.databinding.MainActivityBinding;
 import com.acat.firebase.rtdbbe.model.CustomListView;
 import com.acat.firebase.rtdbbe.model.KeyAndValue;
-import com.acat.firebase.rtdbbe.viewmodel.UploadOrUpdateViewModel;
+import com.acat.firebase.rtdbbe.viewmodel.MainViewModel;
 
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+
+    //local database
+    private DataManager dataManager;
 
     //data Binding
     MainActivityBinding mBinding;
@@ -34,21 +33,18 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private FirebaseRealtimeCRUDGenerator firebaseCRUD;
     private List<KeyAndValue> data;
 
-    //local database
-    private DataManager dataManager;
     //childrenPath
     private final String childrenPath = "entries/registration/users";
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.main_activity);
-        mBinding.setViewModel(new UploadOrUpdateViewModel(this));
-        mBinding.executePendingBindings();
-        mBinding.simpleListView.setOnItemClickListener(this);
-
         //Local Database
         dataManager = ((AppLayer)getApplication()).getDataManager();
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.main_activity);
+        mBinding.setViewModel(new MainViewModel(childrenPath,this));
+        mBinding.simpleListView.setOnItemClickListener(this);
 
         //Firebase CRUD
         firebaseCRUD = (FirebaseRealtimeCRUDGenerator)
@@ -78,7 +74,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         toastFirebaseResult(data.get(position).getFirebaseKey());
 
-        //Save ITEM in Local Database and fetch to UPDATE and DELETE
+        //Save ITEM in Local Database and fetch them to UPDATE and DELETE
         dataManager.setFirebaseKey(data.get(position).getFirebaseKey());
         dataManager.setFirebaseValue(data.get(position).getFirebaseValue());
         dataManager.setFirebaseChildrenPath(childrenPath);
